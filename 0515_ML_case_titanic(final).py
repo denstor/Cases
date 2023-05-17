@@ -26,7 +26,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 
-dirname=".\Titanic_cases\database\\"
+dirname=".\cases\database\\"
 dataset=pd.read_excel(dirname+"cata.xlsx")
 
 dataset=dataset.drop(['name','sibsp', 'parch', 'ticket', 'fare', 
