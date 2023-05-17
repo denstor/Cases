@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-dirname=".\Titanic_cases\database\\"
+dirname=".\cases\database\\"
 df=pd.read_excel(dirname+"cata.xlsx")
 
 # print(df.shape)
