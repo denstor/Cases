@@ -3,8 +3,11 @@ Welcome to my page with ML models & experiments
 data - datasets for modelling
 
 01_Hypothesis_Testing
+
 02_Linear_Regression
+
 03_Choosing_The_Best_Model
+
 04_Hyperparameters_Tuning
 05_KNN
 06_Clustering
