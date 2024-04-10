@@ -40,4 +40,4 @@ data - datasets for modelling
 
 19_Timeseries_Model_SARIMAX
 
-20_BigQuery_Google_Analytics
+20_BigQuery_Google_Analytics_SQL
