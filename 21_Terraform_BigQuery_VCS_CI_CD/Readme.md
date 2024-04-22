@@ -13,8 +13,9 @@ STEPS:
 5/ Create biqquery.tf with a link to a file with sql request (or write a request in the body)
 
 6/Terminal: 
-n/ terraform fmt
-n/ terraform validate
+terraform fmt
+
+terraform validate
 
 7/ Version Control / Git set up - set up Actions secrets & add GCP service account json key value 
 
