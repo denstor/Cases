@@ -22,7 +22,7 @@ terraform validate
 
 8/ Create a git workflow in terraform.yml (exclude *.tfstate)
 
-9/ Termial:
+9/ Terminal:
 
 terraform fmt
 
