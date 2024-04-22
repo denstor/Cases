@@ -13,6 +13,7 @@ STEPS:
 5/ Create biqquery.tf with a link to a file with sql request (or write a request in the body)
 
 6/Terminal: 
+
 terraform fmt
 
 terraform validate
@@ -22,18 +23,30 @@ terraform validate
 8/ Create a git workflow in terraform.yml (exclude *.tfstate)
 
 9/ Termial:
+
 terraform fmt
+
 terraform validate
+
 git add .
+
 git remote add origin GH_REPO
+
 git branch -M main
+
 git commit -m "message"
+
 git push -u origin main
 
 10/ Make changes to sql file or request in a body & commit them.
 Terminal:
+
 terraform fmt
+
 terraform validate
+
 git add .
+
 git commit -m "message"
+
 git push -u origin main
