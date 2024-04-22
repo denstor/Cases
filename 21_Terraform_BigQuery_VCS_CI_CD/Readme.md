@@ -6,7 +6,7 @@ STEPS:
 
 2/ Set up GC bucket to store Terraform state file (infrastructure status)
 
-3/ Terminal: set GOOGLE_CREDENTIALS = <json key>
+3/ Terminal: set GOOGLE_CREDENTIALS = <"json key">
 
 4/ Initialize Terraform environment for GCP (precise bucket & GCP project in providers.tf)
 
