@@ -9,7 +9,9 @@ STEPS:
 3/ Terminal: set GOOGLE_CREDENTIALS = <"json key">
 
 4/ Initialize Terraform environment for GCP (precise bucket & GCP project in providers.tf)
+
 Terminal:
+
 terraform init
 
 5/ Create biqquery.tf with a link to a file with sql request (or write a request in the body)
