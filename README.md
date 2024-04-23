@@ -41,3 +41,7 @@ data - datasets for modelling
 19_Timeseries_Model_SARIMAX
 
 20_BigQuery_Google_Analytics_SQL
+
+21_Terraform_BigQuery_VCS_CI_CD
+
+22_Docker_ML_Model
