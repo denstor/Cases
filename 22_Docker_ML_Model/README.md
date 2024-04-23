@@ -5,7 +5,9 @@ STEPS:
 1/ create files: requirements.txt, app.py, Dockerfile
 
 2/ run virtual environment in terminal:
+
 python3 -m venv venv
+
 source venv/bin/activate
 
 3/ pip install -r requirements.txt
