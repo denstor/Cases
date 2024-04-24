@@ -1,0 +1,101 @@
+id: BQ_update_table_trigger
+namespace: myteam
+description: Save and Execute the flow
+
+labels:
+  env: dev
+  project: myproject1
+
+tasks:
+  - id: "create_dataset"
+    type: "io.kestra.plugin.gcp.bigquery.CreateDataset"
+    name: "kestra_analysis"
+    location: "US"
+    ifExists: "SKIP"
+
+  - id: "check_latest_date"
+    type: io.kestra.plugin.gcp.bigquery.Query
+    fetchOne: true
+    sql: |
+      SELECT MAX(date_formatted) AS date
+      FROM `terraform-420806.kestra_ds.GA4_table_patitioned_clustered`
+
+  - id: "add_new_dates_to_the_initial_table"
+    type: "io.kestra.plugin.gcp.bigquery.Query"
+    destinationTable: "terraform-420806.kestra_ds.GA4_table_patitioned_clustered"
+    writeDisposition: WRITE_APPEND
+    sql: |
+      select 
+        date(timestamp_micros(event_timestamp)) as date_formatted, *
+        from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+        where _table_suffix between '20201101' AND '20210131'
+        and date(timestamp_micros(event_timestamp)) > date('{{ outputs.check_latest_date.row.date }}')
+
+  - id: "ave_spent_per_session"
+    type: "io.kestra.plugin.gcp.bigquery.Query"
+    destinationTable: "terraform-420806.kestra_analysis.ave_spent_per_session"
+    writeDisposition: WRITE_TRUNCATE
+    sql: |
+      with sessions_info as
+      (
+      select 
+      events.user_pseudo_id,
+      session.value.int_value AS session_id,
+      coalesce(value.value.int_value,value.value.float_value,value.value.double_value,0.0) AS spend_value
+
+      FROM `terraform-420806.kestra_ds.GA4_table_patitioned_clustered` as events
+        left join unnest(events.event_params) as session
+        on session.key='ga_session_id'
+
+        left join unnest(events.event_params) as value
+        on value.key='value'
+      WHERE event_name='purchase'
+      )
+      select 
+      user_pseudo_id,
+      count(distinct session_id) AS session_count,
+      sum(spend_value)/count(distinct session_id) AS avg_spend_per_session_by_user
+      from sessions_info
+      where session_id is not null
+      group by 1
+      order by 3 desc
+
+  - id: "products_purchased_by_customers_filtered"
+    type: "io.kestra.plugin.gcp.bigquery.Query"
+    destinationTable: "terraform-420806.kestra_analysis.products_list"
+    writeDisposition: WRITE_TRUNCATE
+    sql: |
+      with item_info as
+      (
+      select
+      user_pseudo_id,
+      array_agg(struct(item_name,quantity)) AS item_list
+
+      FROM `terraform-420806.kestra_ds.GA4_table_patitioned_clustered`,
+      unnest(items)
+
+      WHERE event_name='purchase'
+      group by 1
+      )
+      select
+      IL.item_name AS item_name,
+      sum(IL.quantity) AS quantity
+
+      from item_info,
+      unnest(item_list) as IL
+
+      where "Google Navy Speckled Tee" in (select item_name from unnest(item_list))
+      and IL.item_name!="Google Navy Speckled Tee"
+      group by 1
+      order by 2 desc;
+
+taskDefaults:
+  - type: "io.kestra.plugin.gcp.bigquery"
+    values:
+      projectId: myproject
+      serviceAccount: '{"gcp service account key"}'
+
+triggers:
+  - id: schedule
+    type: io.kestra.core.models.triggers.types.Schedule
+    cron: "0 0 * * *"

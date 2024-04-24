@@ -1,0 +1,31 @@
+id: BQ_create_ds_table
+namespace: myteam
+description: Save and Execute the flow
+
+labels:
+  env: dev
+  project: myproject0
+
+tasks:
+  - id: "create_dataset"
+    type: "io.kestra.plugin.gcp.bigquery.CreateDataset"
+    name: "kestra_ds"
+    location: "US"
+    ifExists: "SKIP"
+  - id: "create_partioned_clustered_table"
+    type: "io.kestra.plugin.gcp.bigquery.Query"
+    destinationTable: "terraform-420806.kestra_ds.GA4_table_patitioned_clustered"
+    clusteringFields: ["event_name"]
+    timePartitioningField: "date_formatted"
+    writeDisposition: WRITE_APPEND
+    sql: |
+      select 
+        date(timestamp_micros(event_timestamp)) as date_formatted, *
+        from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+        where _table_suffix between '20201101' AND '20201130'
+
+taskDefaults:
+  - type: "io.kestra.plugin.gcp.bigquery"
+    values:
+      projectId: myproject
+      serviceAccount: '{"gcp service account key"}'
