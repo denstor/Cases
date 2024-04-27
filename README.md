@@ -45,3 +45,5 @@ data - datasets for modelling
 21_Terraform_BigQuery_VCS_CI_CD
 
 22_Docker_ML_Model
+
+23_Kestra_BigQuery_Data_Pipeline
